@@ -45,7 +45,7 @@ const GetWeather = () => {
                     Temperature : {C.toFixed(2)} &#8451;
                 </div>
                 <div className="welement">
-                    Humidity :{weather.humidity} %
+                    Humidity : {weather.humidity} %
                 </div>
                 <div className="welement">
                     Pressure :  {weather.press} mb
