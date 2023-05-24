@@ -1,9 +1,12 @@
 import Axios from "axios";
-import React from 'react'
-import { useState } from 'react'
-
+import React from 'react';
+import { useState } from 'react';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 
 function App() {
+
+    const client = new QueryClient ();
 
   const [weather, setWeather] = useState('');
   const [city, setCity] = useState('');
@@ -13,14 +16,16 @@ function App() {
   const apiCall = async (e) => {
     e.preventDefault()
     const loc = e.target.elements.loc.value
-    const req = Axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${loc}&appid=${apiKey}`);
-    const res = await req;
+    const {req, isLoading} = useQuery(["weather"], ()=>{
+    Axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${loc}&appid=${apiKey}`).then((res) => res.data);
+});
+    // const res = await req?;
     setWeather({
-        descp: res.data.weather[0].description,
-        temp: res.data.main.temp,
-        city: res.data.name,
-        humidity: res.data.main.humidity,
-        press: res.data.main.pressure,
+        descp: req?.data.weather[0].description,
+        temp: req?.data.main.temp,
+        city: req?.data.name,
+        humidity: req?.data.main.humidity,
+        press: req?.data.main.pressure,
     })
 
     setCity(res.data.name)
@@ -54,6 +59,7 @@ const GetWeather = () => {
 }
 
   return (
+    <QueryClientProvider client={client}>
     <div className="App">
     <div className="weathhead">Weather Info</div>
         <div className="mainweather">
@@ -70,6 +76,7 @@ const GetWeather = () => {
         </div>
       
     </div>
+    </QueryClientProvider>
   );
 }
 
